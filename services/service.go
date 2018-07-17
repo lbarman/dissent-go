@@ -133,7 +133,7 @@ func (s *ServiceState) StartClient0(group *app.Group) error {
 	s.churnHandler = new(churnHandler)
 	s.churnHandler.init(relayID, trusteesIDs)
 	s.churnHandler.isProtocolRunning = s.IsDissentProtocolRunning
-	if s.AutoStart {
+	if s.AutoStart || true {
 		s.churnHandler.startProtocol = s.StartPriFiCommunicateProtocol
 	} else {
 		s.churnHandler.startProtocol = nil

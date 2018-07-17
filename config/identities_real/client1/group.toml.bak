@@ -1,6 +1,0 @@
-Description = "Prifi"
-
-[[servers]]
-  Address = "tcp://128.178.151.111:7000"
-  Public = "VYcxFJhJcfOLY/esG1Gr20Lnc+HkKm73v3YsEx7jRds="
-  Description = "relay"

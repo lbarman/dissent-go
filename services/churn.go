@@ -211,6 +211,8 @@ func (c *churnHandler) handleConnection(msg *network.Envelope) {
 
 	ID := idFromMsg(msg)
 	isTrustee := c.isATrustee(msg.ServerIdentity)
+	connectionMessage := msg.Msg.(*ConnectionRequest)
+	isTrustee  = connectionMessage.AmIATrustee
 	node := "client"
 	if isTrustee {
 		node = "trustee"

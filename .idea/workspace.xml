@@ -3,13 +3,23 @@
   <component name="ChangeListManager">
     <list default="true" id="c2727c9b-cea8-45dd-9d76-53906be55163" name="Default" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/dissent.go" beforeDir="false" afterPath="$PROJECT_DIR$/app/dissent.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/protocols/dissent.go" beforeDir="false" afterPath="$PROJECT_DIR$/protocols/dissent.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/protocols/message_sender.go" beforeDir="false" afterPath="$PROJECT_DIR$/protocols/message_sender.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/protocols/protocol.go" beforeDir="false" afterPath="$PROJECT_DIR$/protocols/protocol.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/protocols/tcp.go" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/identities_default/client0/identity.toml" beforeDir="false" afterPath="$PROJECT_DIR$/config/identities_default/client0/identity.toml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/identities_real/client0/group.toml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/identities_real/client0/group.toml.bak" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/identities_real/client0/identity.toml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/identities_real/client1/group.toml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/identities_real/client1/group.toml.bak" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/identities_real/client1/identity.toml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/identities_real/trustee0/group.toml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/identities_real/trustee0/group.toml.bak" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/identities_real/trustee0/identity.toml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/identities_real/trustee1/group.toml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/identities_real/trustee1/group.toml.bak" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/identities_real/trustee1/identity.toml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/identities_real/trustee2/group.toml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/identities_real/trustee2/group.toml.bak" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/config/identities_real/trustee2/identity.toml" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/services/churn.go" beforeDir="false" afterPath="$PROJECT_DIR$/services/churn.go" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/services/config.go" beforeDir="false" afterPath="$PROJECT_DIR$/services/config.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/services/dissent.go" beforeDir="false" afterPath="$PROJECT_DIR$/services/dissent.go" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/services/service.go" beforeDir="false" afterPath="$PROJECT_DIR$/services/service.go" afterDir="false" />
     </list>
@@ -25,8 +35,8 @@
       <file leaf-file-name="dissent.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/services/dissent.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="998">
-              <caret line="105" column="14" lean-forward="true" selection-start-line="105" selection-start-column="14" selection-end-line="105" selection-end-column="14" />
+            <state relative-caret-position="404">
+              <caret line="180" column="7" selection-start-line="180" selection-start-column="3" selection-end-line="180" selection-end-column="7" />
             </state>
           </provider>
         </entry>
@@ -34,11 +44,8 @@
       <file leaf-file-name="churn.go" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/services/churn.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="980">
-              <caret line="171" column="73" selection-start-line="171" selection-start-column="73" selection-end-line="171" selection-end-column="73" />
-              <folding>
-                <element signature="e#68#216#0" expanded="true" />
-              </folding>
+            <state relative-caret-position="548">
+              <caret line="211" column="22" lean-forward="true" selection-start-line="211" selection-start-column="22" selection-end-line="211" selection-end-column="22" />
             </state>
           </provider>
         </entry>
@@ -46,26 +53,26 @@
       <file leaf-file-name="service.go" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/services/service.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="809">
-              <caret line="134" column="65" selection-start-line="134" selection-start-column="65" selection-end-line="134" selection-end-column="65" />
+            <state relative-caret-position="729">
+              <caret line="135" column="26" selection-start-line="135" selection-start-column="26" selection-end-line="135" selection-end-column="26" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="config.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/../../go/src/github.com/lbarman/dissent-go/services/config.go">
+      <file leaf-file-name="dissent.go" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/app/dissent.go">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="486">
-              <caret line="28" column="33" selection-start-line="28" selection-start-column="33" selection-end-line="28" selection-end-column="33" />
+            <state relative-caret-position="324">
+              <caret line="36" column="40" selection-start-line="36" selection-start-column="40" selection-end-line="36" selection-end-column="40" />
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="config.go" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/services/config.go">
+      <file leaf-file-name="dissent.toml" pinned="false" current-in-tab="false">
+        <entry file="file://$PROJECT_DIR$/config/dissent.toml">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="485">
-              <caret line="64" column="49" selection-start-line="64" selection-start-column="23" selection-end-line="64" selection-end-column="49" />
+            <state relative-caret-position="270">
+              <caret line="10" column="29" lean-forward="true" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="29" />
             </state>
           </provider>
         </entry>
@@ -124,6 +131,14 @@
       <find>41</find>
       <find>setConfig</find>
       <find>Set</find>
+      <find>ConnectionRequest</find>
+      <find>handleConnection</find>
+      <find>handleConn</find>
+      <find>to start</find>
+      <find>tryStart</find>
+      <find>startClient</find>
+      <find>AutoStart</find>
+      <find>autoStart</find>
     </findStrings>
   </component>
   <component name="GOROOT" path="/usr/lib/golang" />
@@ -142,8 +157,8 @@
         <option value="$PROJECT_DIR$/app/dissent.go" />
         <option value="$PROJECT_DIR$/protocols/dissent.go" />
         <option value="$PROJECT_DIR$/protocols/message_sender.go" />
-        <option value="$PROJECT_DIR$/services/churn.go" />
         <option value="$PROJECT_DIR$/services/config.go" />
+        <option value="$PROJECT_DIR$/services/churn.go" />
         <option value="$PROJECT_DIR$/services/dissent.go" />
         <option value="$PROJECT_DIR$/services/service.go" />
       </list>
@@ -258,6 +273,117 @@
     </breakpoint-manager>
   </component>
   <component name="editorHistoryManager">
+    <entry file="file://$PROJECT_DIR$/services/prifi.go" />
+    <entry file="file://$PROJECT_DIR$/../../go/src/github.com/lbarman/dissent-go/protocols/protocol.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="341">
+          <caret line="174" column="25" lean-forward="true" selection-start-line="174" selection-end-line="175" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protocols/prifi.go" />
+    <entry file="file://$PROJECT_DIR$/protocols/tcp.go" />
+    <entry file="file://$PROJECT_DIR$/../../go/src/gopkg.in/dedis/onet.v2/protocol.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="729">
+          <caret line="34" column="5" selection-start-line="34" selection-start-column="5" selection-end-line="34" selection-end-column="5" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/dissent.sh">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="3942">
+          <caret line="146" selection-start-line="146" selection-end-line="146" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/../../go/src/github.com/lbarman/dissent-go/services/config.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="486">
+          <caret line="28" column="33" selection-start-line="28" selection-start-column="33" selection-end-line="28" selection-end-column="33" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/services/churn.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="980">
+          <caret line="171" column="73" selection-start-line="171" selection-start-column="73" selection-end-line="171" selection-end-column="73" />
+          <folding>
+            <element signature="e#68#216#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/services/config.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="485">
+          <caret line="64" column="49" selection-start-line="64" selection-start-column="23" selection-end-line="64" selection-end-column="49" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protocols/messages.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="7" lean-forward="true" selection-start-line="7" selection-end-line="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protocols/protocol.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="1187">
+          <caret line="76" column="38" selection-start-line="76" selection-start-column="38" selection-end-line="76" selection-end-column="38" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protocols/message_sender.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="405">
+          <caret line="22" column="82" selection-start-line="22" selection-start-column="82" selection-end-line="22" selection-end-column="82" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protocols/message_binders.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="7" column="3" lean-forward="true" selection-start-line="7" selection-start-column="3" selection-end-line="7" selection-end-column="3" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/protocols/dissent.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-921">
+          <caret line="19" column="16" lean-forward="true" selection-start-line="19" selection-start-column="16" selection-end-line="19" selection-end-column="16" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/services/dissent.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="998">
+          <caret line="105" column="14" lean-forward="true" selection-start-line="105" selection-start-column="14" selection-end-line="105" selection-end-column="14" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///usr/lib/golang/src/os/proc.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="297">
+          <caret line="14" column="4" selection-start-line="14" selection-start-column="4" selection-end-line="14" selection-end-column="4" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/services/service.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="350">
+          <caret line="123" column="35" selection-start-line="123" selection-start-column="23" selection-end-line="123" selection-end-column="35" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/dissent.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="890">
+          <caret line="226" column="34" selection-start-line="226" selection-start-column="34" selection-end-line="226" selection-end-column="34" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/services/dissent.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="4104">
@@ -372,13 +498,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/app/dissent.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="3267">
-          <caret line="145" column="17" selection-start-line="145" selection-start-column="17" selection-end-line="145" selection-end-column="17" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/../../go/src/github.com/lbarman/dissent-go/services/config.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="486">
@@ -386,27 +505,10 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/services/churn.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="980">
-          <caret line="171" column="73" selection-start-line="171" selection-start-column="73" selection-end-line="171" selection-end-column="73" />
-          <folding>
-            <element signature="e#68#216#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/services/config.go">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="485">
           <caret line="64" column="49" selection-start-line="64" selection-start-column="23" selection-end-line="64" selection-end-column="49" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/protocols/messages.go">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="189">
-          <caret line="7" lean-forward="true" selection-start-line="7" selection-end-line="7" />
         </state>
       </provider>
     </entry>
@@ -438,17 +540,45 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/protocols/messages.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="189">
+          <caret line="7" lean-forward="true" selection-start-line="7" selection-end-line="7" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/services/churn.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="548">
+          <caret line="211" column="22" lean-forward="true" selection-start-line="211" selection-start-column="22" selection-end-line="211" selection-end-column="22" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/config/dissent.toml">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="270">
+          <caret line="10" column="29" lean-forward="true" selection-start-line="10" selection-start-column="29" selection-end-line="10" selection-end-column="29" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/app/dissent.go">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="324">
+          <caret line="36" column="40" selection-start-line="36" selection-start-column="40" selection-end-line="36" selection-end-column="40" />
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/services/dissent.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="998">
-          <caret line="105" column="14" lean-forward="true" selection-start-line="105" selection-start-column="14" selection-end-line="105" selection-end-column="14" />
+        <state relative-caret-position="404">
+          <caret line="180" column="7" selection-start-line="180" selection-start-column="3" selection-end-line="180" selection-end-column="7" />
         </state>
       </provider>
     </entry>
     <entry file="file://$PROJECT_DIR$/services/service.go">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="809">
-          <caret line="134" column="65" selection-start-line="134" selection-start-column="65" selection-end-line="134" selection-end-column="65" />
+        <state relative-caret-position="729">
+          <caret line="135" column="26" selection-start-line="135" selection-start-column="26" selection-end-line="135" selection-end-column="26" />
         </state>
       </provider>
     </entry>

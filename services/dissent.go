@@ -17,6 +17,7 @@ type StopSOCKS struct{}
 // ConnectionRequest messages are sent to the relay
 // by nodes that want to join the protocol.
 type ConnectionRequest struct {
+	AmIATrustee bool
 	ProtocolVersion string
 }
 
@@ -229,7 +230,12 @@ func (s *ServiceState) connectToRelay(relayID *network.ServerIdentity, stopChan 
 // announce themselves to the relay.
 func (s *ServiceState) sendConnectionRequest(relayID *network.ServerIdentity) {
 	log.Lvl4("Sending connection request", s.role, s)
-	err := s.SendRaw(relayID, &ConnectionRequest{ProtocolVersion: s.dissentTomlConfig.ProtocolVersion})
+
+	isATrustee := false
+	if s.role == dissent_protocol.Trustee {
+		isATrustee = true
+	}
+	err := s.SendRaw(relayID, &ConnectionRequest{AmIATrustee: isATrustee, ProtocolVersion: s.dissentTomlConfig.ProtocolVersion})
 
 	if err != nil {
 		if s.role == dissent_protocol.Trustee {
