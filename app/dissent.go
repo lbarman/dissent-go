@@ -71,6 +71,12 @@ func main() {
 			Aliases: []string{"c"},
 			Action:  startClient,
 		},
+		{
+			Name:    "client0",
+			Usage:   "start in client mode",
+			Aliases: []string{"c"},
+			Action:  startClient0,
+		},
 	}
 	app.Flags = []cli.Flag{
 		cli.IntFlag{
@@ -203,6 +209,22 @@ func startClient(c *cli.Context) error {
 	host, group, service := readConfigAndStartCothority(c)
 
 	if err := service.StartClient(group, time.Duration(0)); err != nil {
+		log.Error("Could not start the prifi service:", err)
+		os.Exit(1)
+	}
+
+	host.Router.AddErrorHandler(service.NetworkErrorHappened)
+	host.Start()
+	return nil
+}
+
+// client starts the cothority in client-mode using the already stored configuration.
+func startClient0(c *cli.Context) error {
+	log.Info("Starting client")
+
+	host, group, service := readConfigAndStartCothority(c)
+
+	if err := service.StartClient0(group); err != nil {
 		log.Error("Could not start the prifi service:", err)
 		os.Exit(1)
 	}

@@ -121,7 +121,7 @@ func (s *ServiceState) AllowAutoStart() {
 // StartRelay starts the necessary
 // protocols to enable the relay-mode.
 // In this example it simply starts the demo protocol
-func (s *ServiceState) StartRelay(group *app.Group) error {
+func (s *ServiceState) StartClient0(group *app.Group) error {
 	log.Info("Service", s, "running in relay mode")
 
 	//set state to the correct info, parse .toml

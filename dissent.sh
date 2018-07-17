@@ -120,6 +120,38 @@ case $1 in
 		DEBUG_COLOR="$colors" go run "$bin_file" --cothority_config "$identity_file2" --group "$group_file2" -d "$dbg_lvl" --prifi_config "$prifi_file2" trustee
 		;;
 
+	client0|Client0|CLIENT0)
+
+		#test for proper setup
+		test_go
+		test_cothority
+		clientId=0
+
+		#specialize the config file (we use the dummy folder, and maybe we replace with the real folder after)
+		prifi_file2="$configdir/$prifi_file"
+		identity_file2="$configdir/$defaultIdentitiesDir/client$clientId/$identity_file"
+		group_file2="$configdir/$defaultIdentitiesDir/client$clientId/$group_file"
+
+		#we we want to, try to replace with the real folder
+		if [ "$try_use_real_identities" = "true" ]; then
+			if [ -f "$configdir/$realIdentitiesDir/client$clientId/$identity_file" ] && [ -f "$configdir/$realIdentitiesDir/client$clientId/$group_file" ]; then
+				echo -e "$okMsg Found real identities (in $configdir/$realIdentitiesDir/client$clientId/), using those."
+				identity_file2="$configdir/$realIdentitiesDir/client$clientId/$identity_file"
+				group_file2="$configdir/$realIdentitiesDir/client$clientId/$group_file"
+			else
+				echo -e "$warningMsg Trying to use real identities, but does not exists for client $clientId (in $configdir/$realIdentitiesDir/client$clientId/). Falling back to pre-generated ones."
+			fi
+		else
+			echo -e "$warningMsg using pre-created identities. Set \"try_use_real_identities\" to True in real deployements."
+		fi
+
+		# test that all files exists
+		test_files
+
+		#run PriFi in relay mode
+		DEBUG_COLOR="$colors" go run "$bin_file" --cothority_config "$identity_file2" --group "$group_file2" -d "$dbg_lvl" --prifi_config "$prifi_file2" client0
+		;;
+
 	client|Client|CLIENT)
 
 		clientId="$2"
