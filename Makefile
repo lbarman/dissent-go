@@ -1,5 +1,5 @@
 .PHONY: all
-all: test coveralls it-verbose it2-verbose
+all: test
 
 .PHONY: test
 test: build test_fmt test_govet test_lint
@@ -31,30 +31,9 @@ test_govet:
 		exit 1; \
 		fi \
 	}
-
-.PHONY: coveralls
-coveralls:
-	./coveralls.sh
-
 .PHONY: test_verbose
 test_verbose:
 	DEBUG_COLOR="True" DEBUG_LVL=3 go test -v -race ./...
-
-.PHONY: it
-it:
-	./test.sh integration
-
-.PHONY: it2
-it2:
-	./test.sh integration2
-
-.PHONY: it-verbose
-it-verbose:
-	./test.sh integration || (cat relay.log; exit 1)
-
-.PHONY: it2-verbose
-it2-verbose:
-	./test.sh integration2 || (cat relay.log; exit 1)
 
 .PHONY: clean
 clean:

@@ -57,7 +57,7 @@ type churnHandler struct {
 	waitQueue         *waitQueue
 	nextFreeClientID  int
 	nextFreeTrusteeID int
-	relayIdentity     *network.ServerIdentity //necessary to call createRoster
+	client0ID         *network.ServerIdentity //necessary to call createRoster
 	trusteesIDs       []*network.ServerIdentity
 
 	//to be specified when instantiated
@@ -66,9 +66,9 @@ type churnHandler struct {
 	isProtocolRunning func() bool
 }
 
-func (c *churnHandler) init(relayID *network.ServerIdentity, trusteesIDs []*network.ServerIdentity) {
+func (c *churnHandler) init(client0ID *network.ServerIdentity, trusteesIDs []*network.ServerIdentity) {
 
-	if relayID == nil {
+	if client0ID == nil {
 		log.Fatal("Can't start the churnHandler without the relayID")
 	}
 	if trusteesIDs == nil {
@@ -81,7 +81,7 @@ func (c *churnHandler) init(relayID *network.ServerIdentity, trusteesIDs []*netw
 	}
 	c.nextFreeClientID = 0
 	c.nextFreeTrusteeID = 0
-	c.relayIdentity = relayID
+	c.client0ID = client0ID
 	c.trusteesIDs = trusteesIDs
 }
 
@@ -113,7 +113,7 @@ func (c *churnHandler) createRoster() *onet.Roster {
 	nParticipants := n + m + 1
 
 	participants := make([]*network.ServerIdentity, nParticipants)
-	participants[0] = c.relayIdentity
+	participants[0] = c.client0ID
 	i := 1
 	for _, v := range c.waitQueue.clients {
 		participants[i] = v.serverID
@@ -152,10 +152,10 @@ func (c *churnHandler) createIdentitiesMap() map[string]protocols.PriFiIdentity 
 	res := make(map[string]protocols.PriFiIdentity)
 
 	//add relay
-	res[idFromServerIdentity(c.relayIdentity)] = protocols.PriFiIdentity{
+	res[idFromServerIdentity(c.client0ID)] = protocols.PriFiIdentity{
 		Role:     protocols.Relay,
 		ID:       0,
-		ServerID: c.relayIdentity,
+		ServerID: c.client0ID,
 	}
 
 	//add clients

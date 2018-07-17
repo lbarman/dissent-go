@@ -5,18 +5,51 @@ import (
 	"io/ioutil"
 	"os"
 
-	prifi_protocol "github.com/dedis/prifi/sda/protocols"
 	"gopkg.in/dedis/onet.v2/app"
 	"gopkg.in/dedis/onet.v2/log"
 	"gopkg.in/dedis/onet.v2/network"
 )
 
-var socksClientConfig *prifi_protocol.SOCKSConfig
-var socksServerConfig *prifi_protocol.SOCKSConfig
+//The configuration read in dissent.toml
+type DissentTomlConfig struct {
+	EnforceSameVersionOnNodes               bool
+	ForceConsoleColor                       bool
+	OverrideLogLevel                        int
+	ClientDataOutputEnabled                 bool
+	RelayDataOutputEnabled                  bool
+	PayloadSize                             int
+	CellSizeDown                            int
+	RelayWindowSize                         int
+	RelayUseOpenClosedSlots                 bool
+	RelayUseDummyDataDown                   bool
+	RelayReportingLimit                     int
+	UseUDP                                  bool
+	DoLatencyTests                          bool
+	SocksServerPort                         int
+	SocksClientPort                         int
+	ProtocolVersion                         string
+	DCNetType                               string
+	ReplayPCAP                              bool
+	PCAPFolder                              string
+	TrusteeSleepTimeBetweenMessages         int
+	TrusteeAlwaysSlowDown                   bool
+	TrusteeNeverSlowDown                    bool
+	SimulDelayBetweenClients                int
+	DisruptionProtectionEnabled             bool
+	EquivocationProtectionEnabled           bool // not linked in the back
+	OpenClosedSlotsMinDelayBetweenRequests  int
+	RelayMaxNumberOfConsecutiveFailedRounds int
+	RelayProcessingLoopSleepTime            int
+	RelayRoundTimeOut                       int
+	RelayTrusteeCacheLowBound               int
+	RelayTrusteeCacheHighBound              int
+	VerboseIngressEgressServers             bool
+}
 
-//Set the config, from the prifi.toml. Is called by sda/app.
-func (s *ServiceState) SetConfigFromToml(config *prifi_protocol.PrifiTomlConfig) {
-	log.Lvl3("Setting PriFi configuration...")
+
+//Set the config, from the dissent.toml. Is called by sda/app.
+func (s *ServiceState) SetConfigFromToml(config *DissentTomlConfig) {
+	log.Lvl3("Setting Dissent configuration...")
 	log.Lvlf3("%+v\n", config)
 	s.prifiTomlConfig = config
 }
@@ -61,31 +94,4 @@ func mapIdentities(group *app.Group) (*network.ServerIdentity, []*network.Server
 	}
 
 	return relay, trustees
-}
-func (s *ServiceState) setConfigToPriFiProtocol(wrapper *prifi_protocol.PriFiSDAProtocol) {
-
-	//normal nodes only needs the relay in their identity map
-	identitiesMap := make(map[string]prifi_protocol.PriFiIdentity)
-	identitiesMap[idFromServerIdentity(s.relayIdentity)] = prifi_protocol.PriFiIdentity{
-		Role:     prifi_protocol.Relay,
-		ID:       0,
-		ServerID: s.relayIdentity,
-	}
-	//but the relay needs to know everyone, and this is managed by the churnHandler
-	if s.role == prifi_protocol.Relay {
-		identitiesMap = s.churnHandler.createIdentitiesMap()
-	}
-
-	configMsg := &prifi_protocol.PriFiSDAWrapperConfig{
-		Toml:       s.prifiTomlConfig,
-		Identities: identitiesMap,
-		Role:       s.role,
-		ClientSideSocksConfig: socksClientConfig,
-		RelaySideSocksConfig:  socksServerConfig,
-	}
-
-	wrapper.SetConfigFromPriFiService(configMsg)
-
-	//when PriFi-protocol (via PriFi-lib) detects a slow client, call "handleTimeout"
-	wrapper.SetTimeoutHandler(s.handleTimeout)
 }
