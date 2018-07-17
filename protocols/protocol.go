@@ -3,7 +3,7 @@ package protocols
 import (
 	"gopkg.in/dedis/onet.v2"
 	"gopkg.in/dedis/onet.v2/log"
-	"github.com/dedis/prifi/prifi-lib/net"
+	"errors"
 )
 
 // ProtocolName is the name used to register the SDA wrapper protocol with SDA.
@@ -19,6 +19,9 @@ type DissentProtocol struct {
 	toHandler     func([]string, []string)
 	ResultChannel chan interface{}
 
+	nClients int
+	nTrustees int
+
 	HasStopped       bool //when set to true, the protocol has been stopped by PriFi-lib and should be destroyed
 }
 
@@ -31,32 +34,7 @@ func (p *DissentProtocol) Start() error {
 
 	//At the protocol is ready,
 
-	log.Lvl3("Starting Dissent protocol")
-
-	//emulate the reception of a ALL_ALL_PARAMETERS with StartNow=true
-	msg := new(net.ALL_ALL_PARAMETERS)
-	msg.Add("StartNow", true)
-	msg.Add("NTrustees", len(p.ms.trustees))
-	msg.Add("NClients", len(p.ms.clients))
-	msg.Add("PayloadSize", p.config.Toml.PayloadSize)
-	msg.Add("DownstreamCellSize", p.config.Toml.CellSizeDown)
-	msg.Add("WindowSize", p.config.Toml.RelayWindowSize)
-	msg.Add("UseOpenClosedSlots", p.config.Toml.RelayUseOpenClosedSlots)
-	msg.Add("UseDummyDataDown", p.config.Toml.RelayUseDummyDataDown)
-	msg.Add("ExperimentRoundLimit", p.config.Toml.RelayReportingLimit)
-	msg.Add("UseUDP", p.config.Toml.UseUDP)
-	msg.Add("DCNetType", p.config.Toml.DCNetType)
-	msg.Add("DisruptionProtectionEnabled", p.config.Toml.DisruptionProtectionEnabled)
-	msg.Add("OpenClosedSlotsMinDelayBetweenRequests", p.config.Toml.OpenClosedSlotsMinDelayBetweenRequests)
-	msg.Add("RelayMaxNumberOfConsecutiveFailedRounds", p.config.Toml.RelayMaxNumberOfConsecutiveFailedRounds)
-	msg.Add("RelayProcessingLoopSleepTime", p.config.Toml.RelayProcessingLoopSleepTime)
-	msg.Add("RelayRoundTimeOut", p.config.Toml.RelayRoundTimeOut)
-	msg.Add("RelayTrusteeCacheLowBound", p.config.Toml.RelayTrusteeCacheLowBound)
-	msg.Add("RelayTrusteeCacheHighBound", p.config.Toml.RelayTrusteeCacheHighBound)
-	msg.Add("EquivocationProtectionEnabled", p.config.Toml.EquivocationProtectionEnabled)
-	msg.ForceParams = true
-
-	p.SendTo(p.TreeNode(), msg)
+	log.Lvl3("Starting Dissent protocol (", len(p.ms.clients), "c", len(p.ms.trustees), "t)")
 
 	return nil
 }
@@ -95,10 +73,10 @@ func NewDissentProtocol(n *onet.TreeNodeInstance) (onet.ProtocolInstance, error)
 // that registers handlers for all prifi messages.
 func (p *DissentProtocol) registerHandlers() error {
 	//register handlers
-	/*err := p.RegisterHandler(p.Received_ALL_ALL_PARAMETERS_NEW)
+	err := p.RegisterHandler(p.Received_NEW_ROUND)
 	if err != nil {
 		return errors.New("couldn't register handler: " + err.Error())
-	}*/
+	}
 
 	return nil
 }

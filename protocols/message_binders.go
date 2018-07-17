@@ -1,8 +1,10 @@
 package protocols
 
-//Received_ALL_ALL_SHUTDOWN shuts down the PriFi-lib if it is running
-/*func (p *PriFiSDAProtocol) Received_ALL_ALL_SHUTDOWN(msg Struct_ALL_ALL_SHUTDOWN) error {
-	p.Stop()
-	err := p.prifiLibInstance.ReceivedMessage(msg.ALL_ALL_SHUTDOWN)
-	return err
-}*/
+import "gopkg.in/dedis/onet.v2/log"
+
+func (p *DissentProtocol) Received_NEW_ROUND(msg NEW_ROUND) error {
+
+	log.Lvl1("Received a New ROUND message")
+
+	return nil
+}

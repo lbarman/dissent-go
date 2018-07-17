@@ -79,7 +79,13 @@ func (c *churnHandler) init(client0ID *network.ServerIdentity, trusteesIDs []*ne
 		clients:  make(map[string]*waitQueueEntry),
 		trustees: make(map[string]*waitQueueEntry),
 	}
-	c.nextFreeClientID = 0
+	ID0 := idFromServerIdentity(client0ID)
+	c.waitQueue.clients[ID0] = &waitQueueEntry{
+		serverID:  client0ID,
+		role:      protocols.Client,
+		numericID: 0,
+	}
+	c.nextFreeClientID = 1
 	c.nextFreeTrusteeID = 0
 	c.client0ID = client0ID
 	c.trusteesIDs = trusteesIDs
@@ -110,11 +116,10 @@ func (wq *waitQueue) count() (int, int) {
 func (c *churnHandler) createRoster() *onet.Roster {
 
 	n, m := c.waitQueue.count()
-	nParticipants := n + m + 1
+	nParticipants := n + m
 
 	participants := make([]*network.ServerIdentity, nParticipants)
-	participants[0] = c.client0ID
-	i := 1
+	i := 0
 	for _, v := range c.waitQueue.clients {
 		participants[i] = v.serverID
 		i++
@@ -253,7 +258,15 @@ func (c *churnHandler) handleUnknownDisconnection() {
 
 	c.waitQueue.clients = make(map[string]*waitQueueEntry)
 	c.waitQueue.trustees = make(map[string]*waitQueueEntry)
-	c.nextFreeClientID = 0
+
+	ID0 := idFromServerIdentity(c.client0ID)
+	c.waitQueue.clients[ID0] = &waitQueueEntry{
+		serverID:  c.client0ID,
+		role:      protocols.Client,
+		numericID: 0,
+	}
+
+	c.nextFreeClientID = 1
 	c.nextFreeTrusteeID = 0
 
 	c.stopProtocol()

@@ -130,7 +130,8 @@ func (s *ServiceState) CountParticipants() (int, int) {
 // by the relay as soon as enough participants are
 // ready (one trustee and two clients).
 func (s *ServiceState) StartPriFiCommunicateProtocol() {
-	log.Lvl1("Starting PriFi protocol")
+	c, t := s.CountParticipants()
+	log.Lvl1("Starting PriFi protocol: ", c, "clients", t, "trustees")
 
 	if s.role != dissent_protocol.Client0 {
 		log.Error("Trying to start PriFi protocol from a non-relay node.")
