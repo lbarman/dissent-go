@@ -35,13 +35,13 @@ type ServiceState struct {
 	// We need to embed the ServiceProcessor, so that incoming messages
 	// are correctly handled.
 	*onet.ServiceProcessor
-	prifiTomlConfig           *dissent_protocol.DissentTomlConfig
-	Storage                   *Storage
-	path                      string
-	role                      dissent_protocol.PriFiRole
-	relayIdentity             *network.ServerIdentity
-	trusteeIDs                []*network.ServerIdentity
-	receivedHello             bool
+	dissentTomlConfig *dissent_protocol.DissentTomlConfig
+	Storage           *Storage
+	path              string
+	role              dissent_protocol.DissentRole
+	relayIdentity     *network.ServerIdentity
+	trusteeIDs        []*network.ServerIdentity
+	receivedHello     bool
 
 	connectToRelayStopChan    chan bool //spawned at init
 	connectToRelay2StopChan   chan bool //spawned after receiving a HELLO message
@@ -55,7 +55,7 @@ type ServiceState struct {
 	churnHandler *churnHandler
 
 	//this hold the running protocol (when it runs)
-	PriFiSDAProtocol *dissent_protocol.PriFiSDAProtocol
+	DissentProtocol *dissent_protocol.DissentProtocol
 }
 
 // Storage will be saved, on the contrary of the 'Service'-structure
@@ -97,16 +97,16 @@ func newService(c *onet.Context) (onet.Service, error) {
 // give some extra-configuration to your protocol in here.
 func (s *ServiceState) NewProtocol(tn *onet.TreeNodeInstance, conf *onet.GenericConfig) (onet.ProtocolInstance, error) {
 
-	pi, err := dissent_protocol.NewPriFiSDAWrapperProtocol(tn)
+	pi, err := dissent_protocol.NewDissentProtocol(tn)
 	if err != nil {
 		return nil, err
 	}
 
-	wrapper := pi.(*dissent_protocol.PriFiSDAProtocol)
-	s.PriFiSDAProtocol = wrapper
-	s.setConfigToPriFiProtocol(wrapper)
+	wrapper := pi.(*dissent_protocol.DissentProtocol)
+	s.setConfigToDissentProtocol(wrapper)
+	s.DissentProtocol = wrapper
 
-	return wrapper, nil
+	return pi, nil
 }
 
 // Give the churnHandler the capacity to start the protocol by itself
@@ -125,20 +125,20 @@ func (s *ServiceState) StartRelay(group *app.Group) error {
 	log.Info("Service", s, "running in relay mode")
 
 	//set state to the correct info, parse .toml
-	s.role = dissent_protocol.Relay
+	s.role = dissent_protocol.Client0
 	relayID, trusteesIDs := mapIdentities(group)
 	s.relayIdentity = relayID //should not be used in the case of the relay
 
-	//creates the ChurnHandler, part of the Relay's Service, that will start/stop the protocol
+	//creates the ChurnHandler, part of the Client0's Service, that will start/stop the protocol
 	s.churnHandler = new(churnHandler)
 	s.churnHandler.init(relayID, trusteesIDs)
-	s.churnHandler.isProtocolRunning = s.IsPriFiProtocolRunning
+	s.churnHandler.isProtocolRunning = s.IsDissentProtocolRunning
 	if s.AutoStart {
 		s.churnHandler.startProtocol = s.StartPriFiCommunicateProtocol
 	} else {
 		s.churnHandler.startProtocol = nil
 	}
-	s.churnHandler.stopProtocol = s.StopPriFiCommunicateProtocol
+	s.churnHandler.stopProtocol = s.StopDissentProtocol
 
 	s.connectToTrusteesStopChan = make(chan bool)
 	go s.connectToTrustees(trusteesIDs, s.connectToTrusteesStopChan)

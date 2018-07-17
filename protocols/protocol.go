@@ -22,16 +22,16 @@ type DissentProtocol struct {
 	HasStopped       bool //when set to true, the protocol has been stopped by PriFi-lib and should be destroyed
 }
 
-//Start is called on the Relay by the service when ChurnHandler decides so
+//Start is called on the Client0 by the service when ChurnHandler decides so
 func (p *DissentProtocol) Start() error {
 
 	if !p.configSet {
-		log.Fatal("Trying to start PriFi-lib, but config not set !")
+		log.Fatal("Trying to start Dissent protocol, but config not set !")
 	}
 
 	//At the protocol is ready,
 
-	log.Lvl3("Starting Dissent-SDA-Wrapper Protocol")
+	log.Lvl3("Starting Dissent protocol")
 
 	//emulate the reception of a ALL_ALL_PARAMETERS with StartNow=true
 	msg := new(net.ALL_ALL_PARAMETERS)

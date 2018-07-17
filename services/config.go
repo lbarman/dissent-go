@@ -17,7 +17,7 @@ import (
 func (s *ServiceState) SetConfigFromToml(config *dissent_protocol.DissentTomlConfig) {
 	log.Lvl3("Setting Dissent configuration...")
 	log.Lvlf3("%+v\n", config)
-	s.prifiTomlConfig = config
+	s.dissentTomlConfig = config
 }
 
 // tryLoad tries to load the configuration and updates if a configuration
@@ -60,4 +60,27 @@ func mapIdentities(group *app.Group) (*network.ServerIdentity, []*network.Server
 	}
 
 	return relay, trustees
+}
+
+func (s *ServiceState) setConfigToDissentProtocol(wrapper *dissent_protocol.DissentProtocol) {
+
+	//normal nodes only needs the relay in their identity map
+	identitiesMap := make(map[string]dissent_protocol.DissentIdentity)
+	identitiesMap[idFromServerIdentity(s.relayIdentity)] = dissent_protocol.DissentIdentity{
+		Role:     dissent_protocol.Client0,
+		ID:       0,
+		ServerID: s.relayIdentity,
+	}
+	//but the relay needs to know everyone, and this is managed by the churnHandler
+	if s.role == dissent_protocol.Client0 {
+		identitiesMap = s.churnHandler.createIdentitiesMap()
+	}
+
+	configMsg := &dissent_protocol.DissentProtocolConfig{
+		Toml:       s.dissentTomlConfig,
+		Identities: identitiesMap,
+		Role:       s.role,
+	}
+
+	wrapper.SetConfigFromDissentService(configMsg)
 }

@@ -13,8 +13,8 @@ import (
 	"runtime"
 
 	"github.com/BurntSushi/toml"
-	prifi_protocol "github.com/dedis/prifi/sda/protocols"
-	prifi_service "github.com/dedis/prifi/sda/services"
+	dissent_protocol "github.com/lbarman/dissent-go/protocols"
+	dissent_service "github.com/lbarman/dissent-go/services"
 	"gopkg.in/dedis/kyber.v2/suites"
 	"gopkg.in/dedis/kyber.v2/util/encoding"
 	"gopkg.in/dedis/kyber.v2/util/key"
@@ -113,22 +113,22 @@ func main() {
 /**
  * Every "app" require reading config files and starting cothority beforehand
  */
-func readConfigAndStartCothority(c *cli.Context) (*onet.Server, *app.Group, *prifi_service.ServiceState) {
+func readConfigAndStartCothority(c *cli.Context) (*onet.Server, *app.Group, *dissent_service.ServiceState) {
 	//parse PriFi parameters
-	prifiTomlConfig, err := readPriFiConfigFile(c)
+	dissentTomlConfig, err := readPriFiConfigFile(c)
 
 	//override log level and color
-	if prifiTomlConfig.OverrideLogLevel > 0 {
-		log.Lvl3("Overriding log level (from .toml) to", prifiTomlConfig.OverrideLogLevel)
-		log.SetDebugVisible(prifiTomlConfig.OverrideLogLevel)
+	if dissentTomlConfig.OverrideLogLevel > 0 {
+		log.Lvl3("Overriding log level (from .toml) to", dissentTomlConfig.OverrideLogLevel)
+		log.SetDebugVisible(dissentTomlConfig.OverrideLogLevel)
 	}
-	if prifiTomlConfig.ForceConsoleColor {
+	if dissentTomlConfig.ForceConsoleColor {
 		log.Lvl3("Forcing the console output to be colored (from .toml)")
 		log.SetUseColors(true)
 	}
 
 	if err != nil {
-		log.Error("Could not read prifi config:", err)
+		log.Error("Could not read dissent config:", err)
 		os.Exit(1)
 	}
 
@@ -139,11 +139,11 @@ func readConfigAndStartCothority(c *cli.Context) (*onet.Server, *app.Group, *pri
 		os.Exit(1)
 	}
 
-	//finds the PriFi service
-	service := host.Service(prifi_service.ServiceName).(*prifi_service.ServiceState)
+	//finds the Dissent service
+	service := host.Service(dissent_service.ServiceName).(*dissent_service.ServiceState)
 
 	//set the config from the .toml file
-	service.SetConfigFromToml(prifiTomlConfig)
+	service.SetConfigFromToml(dissentTomlConfig)
 
 	//reads the group description
 	group := readCothorityGroupConfig(c)
@@ -152,10 +152,10 @@ func readConfigAndStartCothority(c *cli.Context) (*onet.Server, *app.Group, *pri
 		os.Exit(1)
 	}
 
-	if prifiTomlConfig.EnforceSameVersionOnNodes {
-		prifiTomlConfig.ProtocolVersion = getGitCommitID()
+	if dissentTomlConfig.EnforceSameVersionOnNodes {
+		dissentTomlConfig.ProtocolVersion = getGitCommitID()
 	} else {
-		prifiTomlConfig.ProtocolVersion = "v1" // standard string for all nodes
+		dissentTomlConfig.ProtocolVersion = "v1" // standard string for all nodes
 	}
 
 	return host, group, service
@@ -328,7 +328,7 @@ func startCothorityNode(c *cli.Context) (*onet.Server, error) {
  * CONFIG
  */
 
-func readPriFiConfigFile(c *cli.Context) (*prifi_protocol.PrifiTomlConfig, error) {
+func readPriFiConfigFile(c *cli.Context) (*dissent_protocol.DissentTomlConfig, error) {
 
 	cfile := c.GlobalString("prifi_config")
 
@@ -342,20 +342,12 @@ func readPriFiConfigFile(c *cli.Context) (*prifi_protocol.PrifiTomlConfig, error
 		log.Error("Could not read file \"", cfile, "\" (specified by flag prifi_config)")
 	}
 
-	tomlConfig := &prifi_protocol.PrifiTomlConfig{}
+	tomlConfig := &dissent_protocol.DissentTomlConfig{}
 
 	_, err = toml.Decode(string(tomlRawData), tomlConfig)
 	if err != nil {
 		log.Error("Could not parse toml file", cfile)
 		return nil, err
-	}
-
-	//ports can be overridden by the command line params
-	if c.GlobalIsSet("port") {
-		tomlConfig.SocksServerPort = c.GlobalInt("port")
-	}
-	if c.GlobalIsSet("port_client") {
-		tomlConfig.SocksClientPort = c.GlobalInt("port_client")
 	}
 
 	return tomlConfig, nil

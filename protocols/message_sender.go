@@ -20,7 +20,7 @@ type MessageSender struct {
 
 // buildMessageSender creates a MessageSender struct
 // given a mep between server identities and PriFi identities.
-func (p *PriFiSDAProtocol) buildMessageSender(identities map[string]PriFiIdentity) MessageSender {
+func (p *DissentProtocol) buildMessageSender(identities map[string]DissentIdentity) MessageSender {
 	nodes := p.List() // Has type []*onet.TreeNode
 	trustees := make(map[int]*onet.TreeNode)
 	clients := make(map[int]*onet.TreeNode)
@@ -47,7 +47,7 @@ func (p *PriFiSDAProtocol) buildMessageSender(identities map[string]PriFiIdentit
 		case Trustee:
 			trustees[trusteeID] = nodes[i]
 			trusteeID++
-		case Relay:
+		case Client0:
 			if relay == nil {
 				relay = nodes[i]
 			} else {

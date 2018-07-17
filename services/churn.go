@@ -3,7 +3,7 @@ package services
 // This file contains the logic to handle churn.
 
 import (
-	"github.com/dedis/prifi/sda/protocols"
+	"github.com/lbarman/dissent-go/protocols"
 	"gopkg.in/dedis/onet.v2"
 	"gopkg.in/dedis/onet.v2/log"
 	"gopkg.in/dedis/onet.v2/network"
@@ -33,7 +33,7 @@ import (
 type waitQueueEntry struct {
 	serverID  *network.ServerIdentity
 	numericID int
-	role      protocols.PriFiRole
+	role      protocols.DissentRole
 }
 
 // waitQueue contains the list of nodes that are currently willing
@@ -148,19 +148,19 @@ func (c *churnHandler) isATrustee(ID *network.ServerIdentity) bool {
 /**
  * Creates an IdentityMap from the waiting nodes, used by PriFi-lib
  */
-func (c *churnHandler) createIdentitiesMap() map[string]protocols.PriFiIdentity {
-	res := make(map[string]protocols.PriFiIdentity)
+func (c *churnHandler) createIdentitiesMap() map[string]protocols.DissentIdentity {
+	res := make(map[string]protocols.DissentIdentity)
 
 	//add relay
-	res[idFromServerIdentity(c.client0ID)] = protocols.PriFiIdentity{
-		Role:     protocols.Relay,
+	res[idFromServerIdentity(c.client0ID)] = protocols.DissentIdentity{
+		Role:     protocols.Client0,
 		ID:       0,
 		ServerID: c.client0ID,
 	}
 
 	//add clients
 	for _, v := range c.waitQueue.clients {
-		res[idFromServerIdentity(v.serverID)] = protocols.PriFiIdentity{
+		res[idFromServerIdentity(v.serverID)] = protocols.DissentIdentity{
 			Role:     protocols.Client,
 			ID:       v.numericID,
 			ServerID: v.serverID,
@@ -169,7 +169,7 @@ func (c *churnHandler) createIdentitiesMap() map[string]protocols.PriFiIdentity 
 
 	//add trustees
 	for _, v := range c.waitQueue.trustees {
-		res[idFromServerIdentity(v.serverID)] = protocols.PriFiIdentity{
+		res[idFromServerIdentity(v.serverID)] = protocols.DissentIdentity{
 			Role:     protocols.Trustee,
 			ID:       v.numericID,
 			ServerID: v.serverID,

@@ -35,9 +35,9 @@ const DELAY_BEFORE_CONNECT_TO_RELAY = 5 * time.Second
 const DELAY_BEFORE_CONNECT_TO_TRUSTEES = 30 * time.Second
 
 // returns true if the PriFi SDA protocol is running (in any state : init, communicate, etc)
-func (s *ServiceState) IsPriFiProtocolRunning() bool {
-	if s.PriFiSDAProtocol != nil {
-		return !s.PriFiSDAProtocol.HasStopped
+func (s *ServiceState) IsDissentProtocolRunning() bool {
+	if s.DissentProtocol != nil {
+		return true
 	}
 	return false
 }
@@ -45,7 +45,7 @@ func (s *ServiceState) IsPriFiProtocolRunning() bool {
 // Packet send by relay; when we get it, we stop the protocol
 func (s *ServiceState) HandleStop(msg *network.Envelope) {
 	log.Lvl1("Received a Handle Stop (I'm ", s.role, ")")
-	s.StopPriFiCommunicateProtocol()
+	s.StopDissentProtocol()
 }
 
 // Packet send by relay to trustees at start
@@ -71,7 +71,7 @@ func (s *ServiceState) HandleConnection(msg *network.Envelope) {
 		log.Fatal("Can't handle a connection without a churnHandler")
 	}
 
-	if s.prifiTomlConfig.ProtocolVersion != msg.Msg.(*ConnectionRequest).ProtocolVersion {
+	if s.dissentTomlConfig.ProtocolVersion != msg.Msg.(*ConnectionRequest).ProtocolVersion {
 		log.Fatal("Different CommitID between relay and ", msg.ServerIdentity.String())
 	}
 
@@ -100,7 +100,7 @@ func (s *ServiceState) handleTimeout(lateClients []string, lateTrustees []string
 // remain in some weird state)
 func (s *ServiceState) NetworkErrorHappened(si *network.ServerIdentity) {
 
-	if s.role != dissent_protocol.Relay {
+	if s.role != dissent_protocol.Client0 {
 		log.Lvl3("A network error occurred with node", si, ", but we're not the relay, nothing to do.")
 		s.connectToRelayStopChan <- true //"nothing" except stop this goroutine
 		return
@@ -131,7 +131,7 @@ func (s *ServiceState) CountParticipants() (int, int) {
 func (s *ServiceState) StartPriFiCommunicateProtocol() {
 	log.Lvl1("Starting PriFi protocol")
 
-	if s.role != dissent_protocol.Relay {
+	if s.role != dissent_protocol.Client0 {
 		log.Error("Trying to start PriFi protocol from a non-relay node.")
 		return
 	}
@@ -139,7 +139,7 @@ func (s *ServiceState) StartPriFiCommunicateProtocol() {
 	timing.StartMeasure("resync")
 	timing.StartMeasure("resync-boot")
 
-	var wrapper *dissent_protocol.PriFiSDAProtocol
+	var wrapper *dissent_protocol.DissentProtocol
 	roster := s.churnHandler.createRoster()
 
 	// Start the PriFi protocol on a flat tree with the relay as root
@@ -151,29 +151,29 @@ func (s *ServiceState) StartPriFiCommunicateProtocol() {
 	}
 
 	// Assert that pi has type PriFiSDAWrapper
-	wrapper = pi.(*dissent_protocol.PriFiSDAProtocol)
+	wrapper = pi.(*dissent_protocol.DissentProtocol)
 
 	//assign and start the protocol
-	s.PriFiSDAProtocol = wrapper
+	s.DissentProtocol = wrapper
 
-	s.setConfigToPriFiProtocol(wrapper)
+	s.setConfigToDissentProtocol(wrapper)
 
 	wrapper.Start()
 }
 
 // stopPriFi stops the PriFi protocol currently running.
-func (s *ServiceState) StopPriFiCommunicateProtocol() {
+func (s *ServiceState) StopDissentProtocol() {
 	log.Lvl1("Stopping PriFi protocol")
 
-	if !s.IsPriFiProtocolRunning() {
+	if !s.IsDissentProtocolRunning() {
 		log.Lvl3("Would stop PriFi protocol, but it's not running.")
 		return
 	}
 
-	if s.PriFiSDAProtocol != nil {
-		s.PriFiSDAProtocol.Stop()
+	if s.DissentProtocol != nil {
+		s.DissentProtocol.Stop()
 	}
-	s.PriFiSDAProtocol = nil
+	s.DissentProtocol = nil
 }
 
 // TODO : change function comment
@@ -187,7 +187,7 @@ func (s *ServiceState) connectToTrustees(trusteesIDs []*network.ServerIdentity, 
 
 	tick := time.Tick(DELAY_BEFORE_CONNECT_TO_TRUSTEES)
 	for range tick {
-		if !s.IsPriFiProtocolRunning() {
+		if !s.IsDissentProtocolRunning() {
 			for _, v := range trusteesIDs {
 				s.sendHelloMessage(v)
 			}
@@ -211,7 +211,7 @@ func (s *ServiceState) connectToRelay(relayID *network.ServerIdentity, stopChan 
 	tick := time.Tick(DELAY_BEFORE_CONNECT_TO_RELAY)
 	for range tick {
 		//log.Info("Service", s, ": Still pinging relay", !s.IsPriFiProtocolRunning())
-		if !s.IsPriFiProtocolRunning() {
+		if !s.IsDissentProtocolRunning() {
 			s.sendConnectionRequest(relayID)
 		}
 
@@ -229,7 +229,7 @@ func (s *ServiceState) connectToRelay(relayID *network.ServerIdentity, stopChan 
 // announce themselves to the relay.
 func (s *ServiceState) sendConnectionRequest(relayID *network.ServerIdentity) {
 	log.Lvl4("Sending connection request", s.role, s)
-	err := s.SendRaw(relayID, &ConnectionRequest{ProtocolVersion: s.prifiTomlConfig.ProtocolVersion})
+	err := s.SendRaw(relayID, &ConnectionRequest{ProtocolVersion: s.dissentTomlConfig.ProtocolVersion})
 
 	if err != nil {
 		if s.role == dissent_protocol.Trustee {
