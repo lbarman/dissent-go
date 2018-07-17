@@ -1,0 +1,43 @@
+Hosts = 5
+CellSizeUp = 1000
+CellSizeDown = 17500
+RelayWindowSize = 1
+DCNetType = "Simple"
+RelayReportingLimit = 600
+RelayMaxNumberOfConsecutiveFailedRounds = 3
+RelayProcessingLoopSleepTime = 100
+RelayRoundTimeOut = 1000
+RelayTrusteeCacheLowBound = 10000
+RelayTrusteeCacheHighBound = 15000
+RelayUseDummyDataDown = false
+RelayDataOutputEnabled = false
+ClientDataOutputEnabled = false
+UseUDP = true
+DoLatencyTests = false
+ReplayPCAP = false
+PCAPFolder = "pcap/"
+DisruptionProtectionEnabled = false
+RelayUseOpenClosedSlots = false
+OpenClosedSlotsMinDelayBetweenRequests = 0
+TrusteeSleepTimeBetweenMessages = 0
+TrusteeAlwaysSlowDown = false
+TrusteeNeverSlowDown = true
+EquivocationProtectionEnabled = false
+SocksServerPort = 8080
+SocksClientPort = 8090
+TrusteeIPRegexPattern = "10\\.1\\.0\\.([0-9]+)"
+ClientIPRegexPattern = "10\\.0\\.1\\.([0-9]+)"
+RelayIPRegexPattern = "10\\.([0-9]+)\\.([0-9]+)\\.254"
+OverrideLogLevel = 1
+ForceConsoleColor = true
+Simulation = "PriFi"
+Servers = 9
+Depth = 1
+CloseWait = "10000000ms"
+RunWait = "10000000ms"
+NTrustees = 3
+SimulDelayBetweenClients = 0
+Suite = "Ed25519"
+
+Rounds
+1

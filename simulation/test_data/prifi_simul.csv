@@ -1,0 +1,2 @@
+hosts,bf,cellsizedown,cellsizeup,depth,ntrustees,openclosedslotsmindelaybetweenrequests,overrideloglevel,relaymaxnumberofconsecutivefailedrounds,relayprocessingloopsleeptime,relayreportinglimit,relayroundtimeout,relaytrusteecachehighbound,relaytrusteecachelowbound,relaywindowsize,rounds,servers,simuldelaybetweenclients,socksclientport,socksserverport,trusteesleeptimebetweenmessages
+5,4,17500,1000,1,3,0,1,3,100,600,1000,15000,10000,1,1,9,0,8090,8080,0
