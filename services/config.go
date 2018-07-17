@@ -5,50 +5,16 @@ import (
 	"io/ioutil"
 	"os"
 
+	dissent_protocol "github.com/lbarman/dissent-go/protocols"
+
 	"gopkg.in/dedis/onet.v2/app"
 	"gopkg.in/dedis/onet.v2/log"
 	"gopkg.in/dedis/onet.v2/network"
 )
 
-//The configuration read in dissent.toml
-type DissentTomlConfig struct {
-	EnforceSameVersionOnNodes               bool
-	ForceConsoleColor                       bool
-	OverrideLogLevel                        int
-	ClientDataOutputEnabled                 bool
-	RelayDataOutputEnabled                  bool
-	PayloadSize                             int
-	CellSizeDown                            int
-	RelayWindowSize                         int
-	RelayUseOpenClosedSlots                 bool
-	RelayUseDummyDataDown                   bool
-	RelayReportingLimit                     int
-	UseUDP                                  bool
-	DoLatencyTests                          bool
-	SocksServerPort                         int
-	SocksClientPort                         int
-	ProtocolVersion                         string
-	DCNetType                               string
-	ReplayPCAP                              bool
-	PCAPFolder                              string
-	TrusteeSleepTimeBetweenMessages         int
-	TrusteeAlwaysSlowDown                   bool
-	TrusteeNeverSlowDown                    bool
-	SimulDelayBetweenClients                int
-	DisruptionProtectionEnabled             bool
-	EquivocationProtectionEnabled           bool // not linked in the back
-	OpenClosedSlotsMinDelayBetweenRequests  int
-	RelayMaxNumberOfConsecutiveFailedRounds int
-	RelayProcessingLoopSleepTime            int
-	RelayRoundTimeOut                       int
-	RelayTrusteeCacheLowBound               int
-	RelayTrusteeCacheHighBound              int
-	VerboseIngressEgressServers             bool
-}
-
 
 //Set the config, from the dissent.toml. Is called by sda/app.
-func (s *ServiceState) SetConfigFromToml(config *DissentTomlConfig) {
+func (s *ServiceState) SetConfigFromToml(config *dissent_protocol.DissentTomlConfig) {
 	log.Lvl3("Setting Dissent configuration...")
 	log.Lvlf3("%+v\n", config)
 	s.prifiTomlConfig = config

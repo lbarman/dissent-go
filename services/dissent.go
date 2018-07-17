@@ -1,7 +1,7 @@
 package services
 
 import (
-	prifi_protocol "github.com/dedis/prifi/sda/protocols"
+	dissent_protocol "github.com/lbarman/dissent-go/protocols"
 	"github.com/dedis/prifi/utils"
 	"gopkg.in/dedis/onet.v2/log"
 	"gopkg.in/dedis/onet.v2/network"
@@ -50,7 +50,7 @@ func (s *ServiceState) HandleStop(msg *network.Envelope) {
 
 // Packet send by relay to trustees at start
 func (s *ServiceState) HandleHelloMsg(msg *network.Envelope) {
-	if s.role != prifi_protocol.Trustee {
+	if s.role != dissent_protocol.Trustee {
 		log.Error("Received a Hello message, but we're not a trustee ! ignoring.")
 		return
 	}
@@ -86,11 +86,6 @@ func (s *ServiceState) HandleDisconnection(msg *network.Envelope) {
 	s.churnHandler.handleDisconnection(msg)
 }
 
-// Packet send by relay when some node disconnected
-func (s *ServiceState) HandleStopSOCKS(msg *network.Envelope) {
-	s.ShutdownSocks()
-}
-
 // handleTimeout is a callback that should be called on the relay
 // when a round times out. It tries to restart PriFi with the nodes
 // that sent their ciphertext in time.
@@ -105,7 +100,7 @@ func (s *ServiceState) handleTimeout(lateClients []string, lateTrustees []string
 // remain in some weird state)
 func (s *ServiceState) NetworkErrorHappened(si *network.ServerIdentity) {
 
-	if s.role != prifi_protocol.Relay {
+	if s.role != dissent_protocol.Relay {
 		log.Lvl3("A network error occurred with node", si, ", but we're not the relay, nothing to do.")
 		s.connectToRelayStopChan <- true //"nothing" except stop this goroutine
 		return
@@ -136,7 +131,7 @@ func (s *ServiceState) CountParticipants() (int, int) {
 func (s *ServiceState) StartPriFiCommunicateProtocol() {
 	log.Lvl1("Starting PriFi protocol")
 
-	if s.role != prifi_protocol.Relay {
+	if s.role != dissent_protocol.Relay {
 		log.Error("Trying to start PriFi protocol from a non-relay node.")
 		return
 	}
@@ -144,19 +139,19 @@ func (s *ServiceState) StartPriFiCommunicateProtocol() {
 	timing.StartMeasure("resync")
 	timing.StartMeasure("resync-boot")
 
-	var wrapper *prifi_protocol.PriFiSDAProtocol
+	var wrapper *dissent_protocol.PriFiSDAProtocol
 	roster := s.churnHandler.createRoster()
 
 	// Start the PriFi protocol on a flat tree with the relay as root
-	tree := roster.GenerateNaryTreeWithRoot(100, s.churnHandler.relayIdentity)
-	pi, err := s.CreateProtocol(prifi_protocol.ProtocolName, tree)
+	tree := roster.GenerateNaryTreeWithRoot(100, s.churnHandler.client0ID)
+	pi, err := s.CreateProtocol(dissent_protocol.ProtocolName, tree)
 
 	if err != nil {
 		log.Fatal("Unable to start Prifi protocol:", err)
 	}
 
 	// Assert that pi has type PriFiSDAWrapper
-	wrapper = pi.(*prifi_protocol.PriFiSDAProtocol)
+	wrapper = pi.(*dissent_protocol.PriFiSDAProtocol)
 
 	//assign and start the protocol
 	s.PriFiSDAProtocol = wrapper
@@ -237,7 +232,7 @@ func (s *ServiceState) sendConnectionRequest(relayID *network.ServerIdentity) {
 	err := s.SendRaw(relayID, &ConnectionRequest{ProtocolVersion: s.prifiTomlConfig.ProtocolVersion})
 
 	if err != nil {
-		if s.role == prifi_protocol.Trustee {
+		if s.role == dissent_protocol.Trustee {
 			log.Lvl3("Connection to relay failed. (I'm a trustee at address", s, ")")
 		} else {
 			log.Lvl3("Connection to relay failed. (I'm a client at address", s, ")")

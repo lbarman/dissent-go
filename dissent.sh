@@ -117,7 +117,7 @@ case $1 in
 		test_files
 
 		#run PriFi in relay mode
-		DEBUG_COLOR="$colors" go run "$bin_file" --cothority_config "$identity_file2" --group "$group_file2" -d "$dbg_lvl" --prifi_config "$prifi_file2" --port "$socksServer1Port" --port_client "$socksServer2Port" trustee
+		DEBUG_COLOR="$colors" go run "$bin_file" --cothority_config "$identity_file2" --group "$group_file2" -d "$dbg_lvl" --prifi_config "$prifi_file2" trustee
 		;;
 
 	client|Client|CLIENT)
@@ -162,7 +162,7 @@ case $1 in
 		test_files
 
 		#run PriFi in relay mode
-		DEBUG_COLOR="$colors" go run "$bin_file" --cothority_config "$identity_file2" --group "$group_file2" -d "$dbg_lvl" --prifi_config "$prifi_file2" --port "$socksServer1Port" --port_client "$socksServer2Port" client
+		DEBUG_COLOR="$colors" go run "$bin_file" --cothority_config "$identity_file2" --group "$group_file2" -d "$dbg_lvl" --prifi_config "$prifi_file2" client
 		;;
 
 	gen-id|Gen-Id|GEN-ID)

@@ -6,34 +6,25 @@ import (
 	"gopkg.in/dedis/onet.v2/network"
 )
 
-//PriFiRole is the type of the enum to qualify the role of a SDA node (Relay, Client, Trustee)
-type PriFiRole int
+//DissentRole is the type of the enum to qualify the role of a SDA node (Relay, Client, Trustee)
+type DissentRole int
 
-//The possible states of a SDA node, of type PriFiRole
+//The possible states of a SDA node, of type DissentRole
 const (
-	Relay PriFiRole = iota
+	Relay   DissentRole = iota
 	Client
 	Trustee
 )
 
 //PriFiIdentity is the identity (role + ID)
 type PriFiIdentity struct {
-	Role     PriFiRole
+	Role     DissentRole
 	ID       int
 	ServerID *network.ServerIdentity
 }
 
-//SOCKSConfig contains the port, payload, and up/down channels for data
-type SOCKSConfig struct {
-	ListeningAddr     string
-	Port              int
-	PayloadSize       int
-	UpstreamChannel   chan []byte
-	DownstreamChannel chan []byte
-}
-
 //The configuration read in prifi.toml
-type PrifiTomlConfig struct {
+type DissentTomlConfig struct {
 	EnforceSameVersionOnNodes               bool
 	ForceConsoleColor                       bool
 	OverrideLogLevel                        int
@@ -69,18 +60,15 @@ type PrifiTomlConfig struct {
 }
 
 //PriFiSDAWrapperConfig is all the information the SDA-Protocols needs. It contains the network map of identities, our role, and the socks parameters if we are the corresponding role
-type PriFiSDAWrapperConfig struct {
-	Toml                  *PrifiTomlConfig
+type DissentProtocolConfig struct {
+	Toml                  *DissentTomlConfig
 	Identities            map[string]PriFiIdentity
-	Role                  PriFiRole
-	ClientSideSocksConfig *SOCKSConfig
-	RelaySideSocksConfig  *SOCKSConfig
-	udpChan               UDPChannel
+	Role                  DissentRole
 }
 
 // SetConfig configures the PriFi node.
 // It **MUST** be called in service.newProtocol or before Start().
-func (p *PriFiSDAProtocol) SetConfigFromPriFiService(config *PriFiSDAWrapperConfig) {
+func (p *PriFiSDAProtocol) SetConfigFromDissentService(config *DissentProtocolConfig) {
 	p.config = *config
 	p.role = config.Role
 

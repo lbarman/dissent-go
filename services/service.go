@@ -10,15 +10,13 @@ package services
 
 import (
 	"io/ioutil"
-	"strconv"
 
-	dissent_protocol "github.com/lbarman/dissent-go/sda/protocols"
+	dissent_protocol "github.com/lbarman/dissent-go/protocols"
 	"gopkg.in/dedis/onet.v2"
 	"gopkg.in/dedis/onet.v2/app"
 	"gopkg.in/dedis/onet.v2/log"
 	"gopkg.in/dedis/onet.v2/network"
 	"time"
-	"github.com/dedis/prifi/stream-multiplexer"
 )
 
 //The name of the service, used by SDA's internals
@@ -37,13 +35,18 @@ type ServiceState struct {
 	// We need to embed the ServiceProcessor, so that incoming messages
 	// are correctly handled.
 	*onet.ServiceProcessor
-	prifiTomlConfig           *disset_protocol.PrifiTomlConfig
+	prifiTomlConfig           *dissent_protocol.DissentTomlConfig
 	Storage                   *Storage
 	path                      string
 	role                      dissent_protocol.PriFiRole
 	relayIdentity             *network.ServerIdentity
 	trusteeIDs                []*network.ServerIdentity
 	receivedHello             bool
+
+	connectToRelayStopChan    chan bool //spawned at init
+	connectToRelay2StopChan   chan bool //spawned after receiving a HELLO message
+	connectToTrusteesStopChan chan bool
+
 
 	//If true, when the number of participants is reached, the protocol starts without calling StartPriFiCommunicateProtocol
 	AutoStart bool
@@ -122,7 +125,7 @@ func (s *ServiceState) StartRelay(group *app.Group) error {
 	log.Info("Service", s, "running in relay mode")
 
 	//set state to the correct info, parse .toml
-	s.role = prifi_protocol.Relay
+	s.role = dissent_protocol.Relay
 	relayID, trusteesIDs := mapIdentities(group)
 	s.relayIdentity = relayID //should not be used in the case of the relay
 
@@ -137,23 +140,6 @@ func (s *ServiceState) StartRelay(group *app.Group) error {
 	}
 	s.churnHandler.stopProtocol = s.StopPriFiCommunicateProtocol
 
-	socksServerConfig = &prifi_protocol.SOCKSConfig{
-		ListeningAddr:     "127.0.0.1:" + strconv.Itoa(s.prifiTomlConfig.SocksClientPort),
-		PayloadSize:       s.prifiTomlConfig.PayloadSize,
-		UpstreamChannel:   make(chan []byte),
-		DownstreamChannel: make(chan []byte),
-	}
-
-	//the relay has a socks Client
-	if !s.hasSocksClientGoRoutine {
-		stopChan := make(chan bool, 1)
-		log.Lvl1("Starting EGRESS", s.prifiTomlConfig.VerboseIngressEgressServers)
-		go stream_multiplexer.StartEgressHandler(socksServerConfig.ListeningAddr, socksServerConfig.PayloadSize,
-			socksServerConfig.UpstreamChannel, socksServerConfig.DownstreamChannel, stopChan, s.prifiTomlConfig.VerboseIngressEgressServers)
-		s.socksStopChan = append(s.socksStopChan, stopChan)
-		s.hasSocksClientGoRoutine = true
-	}
-
 	s.connectToTrusteesStopChan = make(chan bool)
 	go s.connectToTrustees(trusteesIDs, s.connectToTrusteesStopChan)
 
@@ -164,7 +150,7 @@ func (s *ServiceState) StartRelay(group *app.Group) error {
 // protocols to enable the client-mode.
 func (s *ServiceState) StartClient(group *app.Group, delay time.Duration) error {
 	log.Info("Service", s, "running in client mode")
-	s.role = prifi_protocol.Client
+	s.role = dissent_protocol.Client
 
 	relayID, trusteeIDs := mapIdentities(group)
 	s.relayIdentity = relayID
@@ -188,7 +174,7 @@ func (s *ServiceState) StartClient(group *app.Group, delay time.Duration) error 
 // protocols to enable the trustee-mode.
 func (s *ServiceState) StartTrustee(group *app.Group) error {
 	log.Info("Service", s, "running in trustee mode")
-	s.role = prifi_protocol.Trustee
+	s.role = dissent_protocol.Trustee
 
 	//the this might fail if the relay is behind a firewall. The HelloMsg is to fix this
 	relayID, _ := mapIdentities(group)
