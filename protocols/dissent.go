@@ -2,6 +2,7 @@ package protocols
 
 import (
 	"gopkg.in/dedis/onet.v2/network"
+	"gopkg.in/dedis/onet.v2/log"
 )
 
 //DissentRole is the type of the enum to qualify the role of a SDA node (Client0, Client, Trustee)
@@ -64,30 +65,66 @@ type DissentProtocolConfig struct {
 	Role                  DissentRole
 }
 
-// SetConfig configures the PriFi node.
-// It **MUST** be called in service.newProtocol or before Start().
-func (p *DissentProtocol) SetConfigFromDissentService(config *DissentProtocolConfig) {
-	p.config = *config
-	p.role = config.Role
 
-	ms := p.buildMessageSender(config.Identities)
-	p.ms = ms
+//Start is called on the Client0 by the service when ChurnHandler decides so
+func (p *DissentProtocol) Start() error {
 
-	switch config.Role {
-	case Client0:
-		/*relayOutputEnabled := config.Toml.RelayDataOutputEnabled
-		p.prifiLibInstance = prifi_lib.NewPriFiRelay(relayOutputEnabled,
-			config.RelaySideSocksConfig.DownstreamChannel,
-			config.RelaySideSocksConfig.UpstreamChannel,
-			experimentResultChan,
-			p.handleTimeout,
-			ms)*/
-	case Trustee:
+	if !p.configSet {
+		log.Fatal("Trying to start Dissent protocol, but config not set !")
+	}
+	log.Lvl3("Starting Dissent protocol (", p.nClients, "clients &", p.nTrustees, "trustees)")
 
-	case Client:
+	//broadcast the parameters
+	message := &ALL_ALL_PARAMETERS{ NClients: p.nClients, NTrustees:p.nTrustees}
+
+	i := 0
+	for i < p.nClients {
+		p.ms.SendToClient(i, message)
+		i++
+	}
+	i = 0
+	for i < p.nTrustees {
+		p.ms.SendToTrustee(i, message)
+		i++
 	}
 
-	p.registerHandlers()
+	return nil
+}
 
-	p.configSet = true
+func (p *DissentProtocol) Received_ALL_ALL_PARAMETERS(msg Struct_ALL_ALL_PARAMETERS) error {
+
+	log.Lvl1("Received_ALL_ALL_PARAMETERS", p.nClients, p.nTrustees)
+
+	p.nClients = msg.NClients
+	p.nTrustees = msg.NTrustees
+
+	//broadcast my key
+	message := &PUBLIC_KEY{ Key: p.keyPub}
+
+	i := 0
+	for i < p.nClients {
+		p.ms.SendToClient(i, message)
+		i++
+	}
+	i = 0
+	for i < p.nTrustees {
+		p.ms.SendToTrustee(i, message)
+		i++
+	}
+
+	return nil
+}
+
+func (p *DissentProtocol) Received_PUBLIC_KEY(msg Struct_PUBLIC_KEY) error {
+
+	log.Lvl1("Received_PUBLIC_KEY from", msg.ServerIdentity)
+
+	return nil
+}
+
+func (p *DissentProtocol) Received_NEW_ROUND(msg Struct_NEW_ROUND) error {
+
+	log.Lvl1("Received_NEW_ROUND")
+
+	return nil
 }
