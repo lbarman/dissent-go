@@ -40,4 +40,4 @@ if len(toChange) == 0:
     print("Please provide the parameters to change, as key=val");
     sys.exit(1);
 
-replace("prifi_simul.toml", toChange)
+replace("dissent_simul.toml", toChange)

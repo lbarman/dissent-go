@@ -5,8 +5,8 @@ import (
 	"encoding/base64"
 	"fmt"
 	"github.com/BurntSushi/toml"
-	prifi_protocol "github.com/dedis/prifi/sda/protocols"
-	prifi_service "github.com/dedis/prifi/sda/services"
+	dissent_protocol "github.com/lbarman/dissent-go/protocols"
+	dissent_service "github.com/lbarman/dissent-go/sda/services"
 	"gopkg.in/dedis/onet.v2"
 	"gopkg.in/dedis/onet.v2/app"
 	"gopkg.in/dedis/onet.v2/log"
@@ -31,13 +31,13 @@ var SIMULATION_ROUND_TIMEOUT_SECONDS = 360
  */
 
 func init() {
-	onet.SimulationRegister("PriFi", NewSimulationService)
+	onet.SimulationRegister("Dissent", NewSimulationService)
 }
 
 // SimulationService only holds the BFTree simulation
 type SimulationService struct {
 	SimulationManualAssignment
-	prifi_protocol.PrifiTomlConfig
+	dissent_protocol.DissentTomlConfig
 	NTrustees             int
 	TrusteeIPRegexPattern string
 	ClientIPRegexPattern  string
@@ -120,7 +120,7 @@ func (s *SimulationService) Node(config *onet.SimulationConfig) error {
 	group := &app.Group{Roster: config.Roster, Description: roles}
 
 	//finds the PriFi service
-	service := config.GetService(prifi_service.ServiceName).(*prifi_service.ServiceState)
+	service := config.GetService(dissent_service.ServiceName).(*dissent_service.ServiceState)
 
 	//override log level, maybe
 	if s.OverrideLogLevel > 0 {
@@ -221,7 +221,7 @@ func (s *SimulationService) Run(config *onet.SimulationConfig) error {
 
 	log.Lvl1("Giving the experiment", SIMULATION_ROUND_TIMEOUT_SECONDS, "seconds to finish before aborting...")
 	select {
-	case res := <-service.PriFiSDAProtocol.ResultChannel:
+	case res := <-service.DissentProtocol.ResultChannel:
 		resStringArray = res.([]string)
 
 	case <-time.After(time.Duration(SIMULATION_ROUND_TIMEOUT_SECONDS) * time.Second):
@@ -231,13 +231,10 @@ func (s *SimulationService) Run(config *onet.SimulationConfig) error {
 
 	//finish the round, kill the protocol, and writes log
 	writeExperimentResult(resStringArray, simulationID, config)
-	service.StopPriFiCommunicateProtocol()
+	service.StopDissentProtocol()
 
 	duration := time.Now().Sub(startTime)
 	log.Info("Experiment", simulationID, "finished after", duration)
-
-	//stop the SOCKS stuff
-	service.GlobalShutDownSocks()
 
 	lastItem := resStringArray[len(resStringArray)-1]
 	outBit := 0

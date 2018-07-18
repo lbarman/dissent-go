@@ -17,15 +17,6 @@ set client_delay 10ms
 set lanstr_trustees ""
 set lanstr_clients ""
 
-# create the Relay
-set relay [$ns node]
-tb-set-node-os $relay Ubuntu1404-64-STD
-tb-set-hardware $relay pc3060
-tb-set-node-startcmd $relay /share/t1t2/set_route
-tb-set-node-failure-action $relay "nonfatal"
-append lanstr_clients "$relay "
-append lanstr_trustees "$relay "
-
 # create the Trustees
 for {set i 0} {$i < $n_trustees} {incr i} {
    set trustee($i) [$ns node]
@@ -49,10 +40,6 @@ for {set i 0} {$i < $n_clients} {incr i} {
 
 set lanclients [$ns make-lan "$lanstr_clients" $client_bandwidth $client_delay]
 set lantrustees [$ns make-lan "$lanstr_trustees" $trustee_bandwidth $trustee_delay]
-
-# set the relay in both lan
-tb-set-ip-lan $relay $lantrustees 10.1.0.254
-tb-set-ip-lan $relay $lanclients 10.0.1.254
 
 # tell deterlab not to use delays node, but to shape the delays in the hosts (save some nodes)
 tb-set-endnodeshaping $lanclients 1
